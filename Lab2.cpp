@@ -43,16 +43,16 @@ void DrawFloor() {
 
 void DrawAxises() {
     float xAxis[] = {
-    -1.0f, 1.0f, 0.0f,
-    1.0f, 1.0f, 0.0f
+    -1.0f, -1.0f, 0.0f,
+    1.0f, -1.0f, 0.0f
     };
     float yAxis[] = {
     -1.0f, 1.0f, 0.0f,
     -1.0f, -1.0f, 0.0f,
     };
     float zAxis[] = {
-    -1.0f, 1.0f, -1.0f,
-    -1.0f, 1.0f, 1.0f
+    -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f, 1.0f
     };
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -61,7 +61,7 @@ void DrawAxises() {
     glVertexPointer(3, GL_FLOAT, 0, &xAxis);
     for (int i = 0; i < MAX_POS; i++) {
         glPushMatrix();
-        glTranslatef(-MAX_POS, MAX_POS - 2, 0);
+        glTranslatef(MIN_POS, MAX_POS, 0);
         glTranslatef(i * 2, 0, 0);
         glDrawArrays(GL_LINES, 0, 2);
         glPopMatrix();
@@ -69,16 +69,15 @@ void DrawAxises() {
     glVertexPointer(3, GL_FLOAT, 0, &yAxis);
     for (int i = 0; i < MAX_POS; i++) {
         glPushMatrix();
-        glTranslatef(-MAX_POS, -MAX_POS, 0);
+        glTranslatef(MIN_POS, MIN_POS, 0);
         glTranslatef(0, i * 2, 0);
         glDrawArrays(GL_LINES, 0, 2);
         glPopMatrix();
     }
     glVertexPointer(3, GL_FLOAT, 0, &zAxis);
-    glTranslatef(0, 0, 1);
     for (int i = 0; i < MAX_POS; i++) {
         glPushMatrix();
-        glTranslatef(-MAX_POS, MAX_POS - 2, 0);
+        glTranslatef(MIN_POS, MAX_POS, 1);
         glTranslatef(0, 0, i * 2);
         glDrawArrays(GL_LINES, 0, 2);
         glPopMatrix();
@@ -113,29 +112,27 @@ void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &xPos, int &yP
         if (xPos < MAX_POS) {
             xPos++;
         }
-        //std::cout << xPos << std::endl;
+        
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         if (xPos > MIN_POS) {
             xPos--;
         }
-        //std::cout << xPos << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         if (yPos < MAX_POS) {
             yPos++;
         }
-        //std::cout << yPos << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         if (yPos > MIN_POS) {
             yPos--;
         }
-        //std::cout << yPos << std::endl;
     }
     glRotatef(-xAngle, 1, 0, 0);
     glRotatef(-zAngle, 0, 0, 1);
     glTranslatef(-xPos, -yPos, -3);
+    //std::cout << "x:" << xPos << " y:" << yPos << std::endl;
 }
 
 int main(void) {
