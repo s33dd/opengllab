@@ -1,4 +1,7 @@
-﻿#include <GLFW/glfw3.h>
+﻿#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
 
 #define MAX_POS 20
@@ -150,6 +153,15 @@ int main(void) {
     glFrustum(-1, 1, -1, 1, 1, 100);
     glTranslatef(0, 0, -2);
     glEnable(GL_DEPTH_TEST);
+
+    //imgui initialization
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     while (!glfwWindowShouldClose(window)) {
         processExit(window);
