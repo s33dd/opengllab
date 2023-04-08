@@ -3,6 +3,8 @@
 #include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 #define MAX_POS 20
 #define MIN_POS -20
@@ -92,7 +94,36 @@ void DrawAxises() {
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &xPos, int &yPos, int &zPos) {
+void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &rho, int &theta, int &phi) {
+    //Min and max values;
+    int phiMax = 360;
+    int phiMin = 0;
+    int rhoMin = 0;
+    int thetaMax = 180;
+    int thetaMin = 0;
+
+    if (rho < rhoMin) {
+        rho = rhoMin;
+    }
+    if (theta > thetaMax) {
+        theta = thetaMax;
+    }
+    if (theta < thetaMin) {
+        theta = thetaMin;
+    }
+    if (phi > phiMax) {
+        phi = phiMax;
+    }
+    if (phi < phiMin) {
+        phi = phiMin;
+    }
+    //Translate degrees into radians
+    double thetaRad = theta * M_PI / 180;
+    double phiRad = phi * M_PI / 180;
+    //Translate spherical into carthesian
+    int xPos = (int)round((rho * cos(phiRad) * sin(thetaRad)));
+    int yPos = (int)round(rho * sin(thetaRad) * sin(phiRad));
+    int zPos = (int)round((rho * cos(thetaRad)));
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         if (++xAngle > 180) {
             xAngle = 180;
@@ -115,34 +146,17 @@ void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &xPos, int &yP
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         zAngle--;
     }
-    if (xPos > MAX_POS) {
-        xPos = MAX_POS;
-    }
-    if (xPos < MIN_POS) {
-        xPos = MIN_POS;
-    }
-    if (yPos > MAX_POS) {
-        yPos = MAX_POS;
-    }
-    if (yPos < MIN_POS) {
-        yPos = MIN_POS;
-    }
-    if (zPos > MAX_POS) {
-        zPos = MAX_POS;
-    }
-    if (zPos < MIN_HEIGHT) {
-        zPos = MIN_HEIGHT;
-    }
+
     glRotatef(-xAngle, 1, 0, 0);
     glRotatef(-zAngle, 0, 0, 1);
     glTranslatef(-xPos, -yPos, -zPos);
-    //std::cout << "x:" << xPos << " y:" << yPos << std::endl;
+    std::cout << "x:" << xPos << " y:" << yPos << " z:" << zPos << std::endl;
 }
 
 int main(void) {
 
     int xAngle = 90, zAngle = 45; //angles set for look on axises after start
-    int xPos = 0, yPos = 0, zPos = 0;
+    int rho = 0, theta = 0, phi = 0;
 
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(800, 600, "Amongus", NULL, NULL);
@@ -153,9 +167,8 @@ int main(void) {
 
     glLoadIdentity();
     glFrustum(-1, 1, -1, 1, 1, 100);
-    glTranslatef(0, 0, -2);
     glEnable(GL_DEPTH_TEST);
-
+    
     //imgui initialization
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -176,18 +189,18 @@ int main(void) {
         ImGui::NewFrame();
 
         glPushMatrix();
-            MoveCamera(window, xAngle, zAngle, xPos, yPos, zPos);
+            MoveCamera(window, xAngle, zAngle, rho, theta, phi);
             DrawFloor();
             DrawAxises();
         glPopMatrix();
 
         ImGui::Begin("Menu");
-            ImGui::Text("xPos");
-            ImGui::InputInt("##xPos", &xPos);
-            ImGui::Text("yPos");
-            ImGui::InputInt("##yPos", &yPos);
-            ImGui::Text("zPos");
-            ImGui::InputInt("##zPos", &zPos);
+            ImGui::Text("rho");
+            ImGui::InputInt("##rho", &rho);
+            ImGui::Text("theta");
+            ImGui::InputInt("##theta", &theta);
+            ImGui::Text("phi");
+            ImGui::InputInt("##phi", &phi);
         ImGui::End();
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
