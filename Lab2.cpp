@@ -9,6 +9,9 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    glLoadIdentity();
+    float widtHeightRatio = (float)width / (float)height;
+    glFrustum(-widtHeightRatio, widtHeightRatio, -1, 1, 1, 100);
 }
 
 void processExit(GLFWwindow* window) {
@@ -30,14 +33,14 @@ void DrawFloor() {
     for (int i = MIN_POS / 2; i < MAX_POS / 2; i++) {
         for (int j = MIN_POS / 2; j < MAX_POS / 2; j++) {
             glPushMatrix();
-            if ((i+j) % 2 == 0) {
-                glColor3f(1.0f, 0.5f, 0.0f);
-            }
-            else {
-                glColor3f(1.0f, 0.0f, 1.0f);
-            }
-            glTranslatef(i * 2, j * 2, -0.1);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+                if ((i+j) % 2 == 0) {
+                    glColor3f(1.0f, 0.5f, 0.0f);
+                }
+                else {
+                    glColor3f(1.0f, 0.0f, 1.0f);
+                }
+                glTranslatef(i * 2, j * 2, -0.1);
+                glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
             glPopMatrix();
         }
     }
@@ -64,25 +67,25 @@ void DrawAxises() {
     glVertexPointer(3, GL_FLOAT, 0, &xAxis);
     for (int i = 0; i < MAX_POS; i++) {
         glPushMatrix();
-        glTranslatef(MIN_POS, MAX_POS, 0);
-        glTranslatef(i * 2, 0, 0);
-        glDrawArrays(GL_LINES, 0, 2);
+            glTranslatef(MIN_POS, MAX_POS, 0);
+            glTranslatef(i * 2, 0, 0);
+            glDrawArrays(GL_LINES, 0, 2);
         glPopMatrix();
     }
     glVertexPointer(3, GL_FLOAT, 0, &yAxis);
     for (int i = 0; i < MAX_POS; i++) {
         glPushMatrix();
-        glTranslatef(MIN_POS, MIN_POS, 0);
-        glTranslatef(0, i * 2, 0);
-        glDrawArrays(GL_LINES, 0, 2);
+            glTranslatef(MIN_POS, MIN_POS, 0);
+            glTranslatef(0, i * 2, 0);
+            glDrawArrays(GL_LINES, 0, 2);
         glPopMatrix();
     }
     glVertexPointer(3, GL_FLOAT, 0, &zAxis);
     for (int i = 0; i < MAX_POS; i++) {
         glPushMatrix();
-        glTranslatef(MIN_POS, MAX_POS, 1);
-        glTranslatef(0, 0, i * 2);
-        glDrawArrays(GL_LINES, 0, 2);
+            glTranslatef(MIN_POS, MAX_POS, 1);
+            glTranslatef(0, 0, i * 2);
+            glDrawArrays(GL_LINES, 0, 2);
         glPopMatrix();
     }
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -140,7 +143,8 @@ void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &xPos, int &yP
 
 int main(void) {
 
-    int xAngle = 0, zAngle = 0, xPos = 0, yPos = 0;
+    int xAngle = 90, zAngle = 45; //angles set for look on axises after start
+    int xPos = 0, yPos = 0;
 
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(800, 600, "Amongus", NULL, NULL);
@@ -169,10 +173,14 @@ int main(void) {
         glClearColor(46/255.0f, 202/255.0f, 52/255.0f, 255/255.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        //ImGui_ImplOpenGL3_NewFrame();
+        //ImGui_ImplGlfw_NewFrame();
+        //ImGui::NewFrame();
+
         glPushMatrix();
-        MoveCamera(window, xAngle, zAngle, xPos, yPos);
-        DrawFloor();
-        DrawAxises();
+            MoveCamera(window, xAngle, zAngle, xPos, yPos);
+            DrawFloor();
+            DrawAxises();
         glPopMatrix();
 
         glfwSwapBuffers(window);
