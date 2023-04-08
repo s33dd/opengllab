@@ -6,6 +6,7 @@
 
 #define MAX_POS 20
 #define MIN_POS -20
+#define MIN_HEIGHT 3
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -91,7 +92,7 @@ void DrawAxises() {
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &xPos, int &yPos) {
+void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &xPos, int &yPos, int &zPos) {
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         if (++xAngle > 180) {
             xAngle = 180;
@@ -114,37 +115,34 @@ void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &xPos, int &yP
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         zAngle--;
     }
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        if (xPos < MAX_POS) {
-            xPos++;
-        }
-        
+    if (xPos > MAX_POS) {
+        xPos = MAX_POS;
     }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        if (xPos > MIN_POS) {
-            xPos--;
-        }
+    if (xPos < MIN_POS) {
+        xPos = MIN_POS;
     }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        if (yPos < MAX_POS) {
-            yPos++;
-        }
+    if (yPos > MAX_POS) {
+        yPos = MAX_POS;
     }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        if (yPos > MIN_POS) {
-            yPos--;
-        }
+    if (yPos < MIN_POS) {
+        yPos = MIN_POS;
+    }
+    if (zPos > MAX_POS) {
+        zPos = MAX_POS;
+    }
+    if (zPos < MIN_HEIGHT) {
+        zPos = MIN_HEIGHT;
     }
     glRotatef(-xAngle, 1, 0, 0);
     glRotatef(-zAngle, 0, 0, 1);
-    glTranslatef(-xPos, -yPos, -3);
+    glTranslatef(-xPos, -yPos, -zPos);
     //std::cout << "x:" << xPos << " y:" << yPos << std::endl;
 }
 
 int main(void) {
 
     int xAngle = 90, zAngle = 45; //angles set for look on axises after start
-    int xPos = 0, yPos = 0;
+    int xPos = 0, yPos = 0, zPos = 0;
 
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(800, 600, "Amongus", NULL, NULL);
@@ -173,19 +171,34 @@ int main(void) {
         glClearColor(46/255.0f, 202/255.0f, 52/255.0f, 255/255.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //ImGui_ImplOpenGL3_NewFrame();
-        //ImGui_ImplGlfw_NewFrame();
-        //ImGui::NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
         glPushMatrix();
-            MoveCamera(window, xAngle, zAngle, xPos, yPos);
+            MoveCamera(window, xAngle, zAngle, xPos, yPos, zPos);
             DrawFloor();
             DrawAxises();
         glPopMatrix();
 
+        ImGui::Begin("Menu");
+            ImGui::Text("xPos");
+            ImGui::InputInt("##xPos", &xPos);
+            ImGui::Text("yPos");
+            ImGui::InputInt("##yPos", &yPos);
+            ImGui::Text("zPos");
+            ImGui::InputInt("##zPos", &zPos);
+        ImGui::End();
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwTerminate();
     return 0;
