@@ -150,7 +150,7 @@ void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &rho, int &the
     glRotatef(-xAngle, 1, 0, 0);
     glRotatef(-zAngle, 0, 0, 1);
     glTranslatef(-xPos, -yPos, -zPos);
-    std::cout << "x:" << xPos << " y:" << yPos << " z:" << zPos << std::endl;
+    //std::cout << "x:" << xPos << " y:" << yPos << " z:" << zPos << std::endl;
 }
 
 int main(void) {
