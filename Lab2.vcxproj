@@ -105,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\3 курс\Геом. мод\Lab2\Libs\glfw\include;G:\3 курс\Геом. мод\Lab2\Libs\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\3 курс\Геом. мод\Lab2\Libs\glad\include;G:\3 курс\Геом. мод\Lab2\Libs\glfw\include;G:\3 курс\Геом. мод\Lab2\Libs\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Lab2.cpp" />
+    <ClCompile Include="Libs\glad\src\glad.c" />
     <ClCompile Include="Libs\imgui\imgui.cpp" />
     <ClCompile Include="Libs\imgui\imgui_demo.cpp" />
     <ClCompile Include="Libs\imgui\imgui_draw.cpp" />

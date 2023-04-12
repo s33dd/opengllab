@@ -1,10 +1,12 @@
-﻿#include <imgui.h>
+﻿#include <glad/glad.h>
+#include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <string>
 
 #define MAX_POS 20
 #define MIN_POS -20
@@ -153,6 +155,17 @@ void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &rho, int &the
     //std::cout << "x:" << xPos << " y:" << yPos << " z:" << zPos << std::endl;
 }
 
+void DrawSkybox(GLFWwindow* window, GLuint *target) {
+    std::string skybox[] = {"skybox/right.png",
+                     "skybox/left.png",
+                     "skybox/left.png",
+                     "skybox/left.png",
+                     "skybox/left.png",
+                     "skybox/left.png" };
+    glGenTextures(1, target);
+    //glBindTexture(GL_TEXTURE_CUBE_MAP, );
+}
+
 int main(void) {
 
     int xAngle = 90, zAngle = 45; //angles set for look on axises after start
@@ -161,6 +174,7 @@ int main(void) {
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(800, 600, "Amongus", NULL, NULL);
     glfwMakeContextCurrent(window);
+    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glViewport(0, 0, 800, 600);
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);

@@ -19,6 +19,9 @@
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{60599f00-3f8d-4694-942a-05bffcd94834}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\glad">
+      <UniqueIdentifier>{e5a3cd95-f18f-4446-a19c-13318987b965}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lab2.cpp">
@@ -44,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="Libs\imgui\imgui_tables.cpp">
       <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\glad\src\glad.c">
+      <Filter>Source Files\glad</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
