@@ -7,6 +7,9 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <string>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#include <vector>
 
 #define MAX_POS 20
 #define MIN_POS -20
@@ -54,16 +57,16 @@ void DrawFloor() {
 
 void DrawAxises() {
     float xAxis[] = {
-    -1.0f, -1.0f, 0.0f,
-    1.0f, -1.0f, 0.0f
+    0.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f
     };
     float yAxis[] = {
-    -1.0f, 1.0f, 0.0f,
-    -1.0f, -1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
     };
     float zAxis[] = {
-    -1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f, 1.0f
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f
     };
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -72,36 +75,36 @@ void DrawAxises() {
     glVertexPointer(3, GL_FLOAT, 0, &xAxis);
     for (int i = 0; i < MAX_POS; i++) {
         glPushMatrix();
-            glTranslatef(MIN_POS, MAX_POS, 0);
-            glTranslatef(i * 2, 0, 0);
+            //glTranslatef(MIN_POS, MAX_POS, 0);
+            glTranslatef(i, 0, 0);
             glDrawArrays(GL_LINES, 0, 2);
         glPopMatrix();
     }
     glVertexPointer(3, GL_FLOAT, 0, &yAxis);
     for (int i = 0; i < MAX_POS; i++) {
         glPushMatrix();
-            glTranslatef(MIN_POS, MIN_POS, 0);
-            glTranslatef(0, i * 2, 0);
+           //glTranslatef(MIN_POS, MIN_POS, 0);
+            glTranslatef(0, i, 0);
             glDrawArrays(GL_LINES, 0, 2);
         glPopMatrix();
     }
     glVertexPointer(3, GL_FLOAT, 0, &zAxis);
     for (int i = 0; i < MAX_POS; i++) {
         glPushMatrix();
-            glTranslatef(MIN_POS, MAX_POS, 1);
-            glTranslatef(0, 0, i * 2);
+            //glTranslatef(MIN_POS, MAX_POS, 1);
+            glTranslatef(0, 0, i);
             glDrawArrays(GL_LINES, 0, 2);
         glPopMatrix();
     }
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &rho, int &theta, int &phi) {
+std::vector<int> MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &rho, int &theta, int &phi) {
     //Min and max values;
-    int phiMax = 360;
+    int phiMax = 180;
     int phiMin = 0;
     int rhoMin = 0;
-    int thetaMax = 180;
+    int thetaMax = 360;
     int thetaMin = 0;
 
     if (rho < rhoMin) {
@@ -123,9 +126,9 @@ void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &rho, int &the
     double thetaRad = theta * M_PI / 180;
     double phiRad = phi * M_PI / 180;
     //Translate spherical into carthesian
-    int xPos = (int)round((rho * cos(phiRad) * sin(thetaRad)));
-    int yPos = (int)round(rho * sin(thetaRad) * sin(phiRad));
-    int zPos = (int)round((rho * cos(thetaRad)));
+    int xPos = (int)round(rho * sin(phiRad) * cos(thetaRad));
+    int yPos = (int)round((rho * sin(thetaRad) * sin(phiRad)));
+    int zPos = (int)round((rho * cos(phiRad)));
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         if (++xAngle > 180) {
             xAngle = 180;
@@ -152,24 +155,19 @@ void MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &rho, int &the
     glRotatef(-xAngle, 1, 0, 0);
     glRotatef(-zAngle, 0, 0, 1);
     glTranslatef(-xPos, -yPos, -zPos);
+	std::vector<int> coords;
+	coords.push_back(xPos);
+	coords.push_back(yPos);
+	coords.push_back(zPos);
+	return coords;
     //std::cout << "x:" << xPos << " y:" << yPos << " z:" << zPos << std::endl;
-}
-
-void DrawSkybox(GLFWwindow* window, GLuint *target) {
-    std::string skybox[] = {"skybox/right.png",
-                     "skybox/left.png",
-                     "skybox/left.png",
-                     "skybox/left.png",
-                     "skybox/left.png",
-                     "skybox/left.png" };
-    glGenTextures(1, target);
-    //glBindTexture(GL_TEXTURE_CUBE_MAP, );
 }
 
 int main(void) {
 
     int xAngle = 90, zAngle = 45; //angles set for look on axises after start
     int rho = 0, theta = 0, phi = 0;
+	std::vector<int> coords;
 
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(800, 600, "Amongus", NULL, NULL);
@@ -203,7 +201,7 @@ int main(void) {
         ImGui::NewFrame();
 
         glPushMatrix();
-            MoveCamera(window, xAngle, zAngle, rho, theta, phi);
+            coords = MoveCamera(window, xAngle, zAngle, rho, theta, phi);
             DrawFloor();
             DrawAxises();
         glPopMatrix();
@@ -215,6 +213,7 @@ int main(void) {
             ImGui::InputInt("##theta", &theta);
             ImGui::Text("phi");
             ImGui::InputInt("##phi", &phi);
+			ImGui::Text("X: %d, Y: %d, Z: %d", coords[0], coords[1], coords[2]);
         ImGui::End();
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
