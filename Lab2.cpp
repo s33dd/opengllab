@@ -99,12 +99,12 @@ void DrawAxises() {
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-std::vector<int> MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &rho, int &theta, int &phi) {
+std::vector<int> MoveCamera(GLFWwindow* window, int &rho, int &theta, int &phi) {
     //Min and max values;
-    int phiMax = 180;
+    int phiMax = 90;
     int phiMin = 0;
     int rhoMin = 0;
-    int thetaMax = 360;
+    int thetaMax = 90;
     int thetaMin = 0;
 
     if (rho < rhoMin) {
@@ -129,31 +129,8 @@ std::vector<int> MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &r
     int xPos = (int)round(rho * sin(phiRad) * cos(thetaRad));
     int yPos = (int)round((rho * sin(thetaRad) * sin(phiRad)));
     int zPos = (int)round((rho * cos(phiRad)));
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        if (++xAngle > 180) {
-            xAngle = 180;
-        }
-        else {
-            xAngle = xAngle;
-        }
-    }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        if (--xAngle < 0) {
-            xAngle = 0;
-        }
-        else {
-            xAngle = xAngle;
-        }
-    }
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        zAngle++;
-    }
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        zAngle--;
-    }
-
-    glRotatef(-xAngle, 1, 0, 0);
-    glRotatef(-zAngle, 0, 0, 1);
+    glRotatef(-phi, 1, 0, 0);
+    glRotatef(-(theta + thetaMax), 0, 0, 1);
     glTranslatef(-xPos, -yPos, -zPos);
 	std::vector<int> coords;
 	coords.push_back(xPos);
@@ -165,7 +142,6 @@ std::vector<int> MoveCamera(GLFWwindow* window, int &xAngle, int &zAngle, int &r
 
 int main(void) {
 
-    int xAngle = 90, zAngle = 45; //angles set for look on axises after start
     int rho = 0, theta = 0, phi = 0;
 	std::vector<int> coords;
 
@@ -201,7 +177,7 @@ int main(void) {
         ImGui::NewFrame();
 
         glPushMatrix();
-            coords = MoveCamera(window, xAngle, zAngle, rho, theta, phi);
+            coords = MoveCamera(window, rho, theta, phi);
             DrawFloor();
             DrawAxises();
         glPopMatrix();
