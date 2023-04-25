@@ -47,7 +47,7 @@ void DrawFloor() {
                 else {
                     glColor3f(1.0f, 0.0f, 1.0f);
                 }
-                glTranslatef(i * 2, j * 2, -0.1);
+                glTranslatef(i * 2, j * 2, -0.5);
                 glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
             glPopMatrix();
         }
@@ -126,9 +126,9 @@ std::vector<int> MoveCamera(GLFWwindow* window, int &rho, int &theta, int &phi) 
     double thetaRad = theta * M_PI / 180;
     double phiRad = phi * M_PI / 180;
     //Translate spherical into carthesian
-    int xPos = (int)round(rho * sin(phiRad) * cos(thetaRad));
-    int yPos = (int)round((rho * sin(thetaRad) * sin(phiRad)));
-    int zPos = (int)round((rho * cos(phiRad)));
+    GLfloat xPos = (GLfloat)rho * sin(phiRad) * cos(thetaRad);
+    GLfloat yPos = (GLfloat)(rho * sin(thetaRad) * sin(phiRad));
+    GLfloat zPos = (GLfloat)(rho * cos(phiRad));
     glRotatef(-phi, 1, 0, 0);
     glRotatef(-(theta + thetaMax), 0, 0, 1);
     glTranslatef(-xPos, -yPos, -zPos);
